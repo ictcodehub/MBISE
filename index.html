@@ -30,12 +30,20 @@
       background-color: #f8fafc;
       color: #0f172a;
       -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
     }
     .tab-pane {
       display: none;
     }
     .tab-pane.active {
       display: block;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
     @media print {
       .no-print { display: none !important; }
@@ -46,54 +54,55 @@
 </head>
 <body class="min-h-screen flex flex-col text-slate-900 text-sm">
 
-  <!-- Header -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 no-print">
+  <!-- Header (Responsive App Bar) -->
+  <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 no-print">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <span class="px-2 py-0.5 text-xs font-semibold bg-slate-900 text-white rounded">MB2</span>
+      <div class="flex items-center gap-2.5">
+        <span class="px-2 py-0.5 text-xs font-bold bg-slate-900 text-white rounded">MB2</span>
         <div class="leading-tight">
-          <div class="font-semibold text-slate-900 text-sm">MBISE</div>
-          <div class="text-[11px] text-slate-500 font-normal">Mutiara Bangsa Integrated School Ecosystem (dibaca: Embais)</div>
+          <div class="font-bold text-slate-900 text-sm">MBISE</div>
+          <div class="text-[10.5px] text-slate-500 font-medium truncate max-w-[190px] sm:max-w-none">Server Mandiri Sekolah Terpadu</div>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button onclick="window.print()" class="px-3 py-1.5 rounded-md border border-slate-200 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 flex items-center gap-1.5 transition-colors">
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <button onclick="window.print()" class="hidden sm:flex px-3 py-1.5 rounded-md border border-slate-200 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 items-center gap-1.5 transition-colors">
           <i data-lucide="printer" class="w-3.5 h-3.5 text-slate-500"></i>
           <span>Cetak PDF</span>
         </button>
-        <button onclick="switchTab('kalkulasi')" class="px-3 py-1.5 rounded-md text-xs font-medium bg-slate-900 text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+        <button onclick="switchTab('kalkulasi')" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5 shadow-xs active:scale-95">
           <i data-lucide="calculator" class="w-3.5 h-3.5 text-slate-300"></i>
-          <span>Hitung Anggaran</span>
+          <span class="hidden sm:inline">Hitung Anggaran</span>
+          <span class="sm:hidden">Kalkulator</span>
         </button>
       </div>
     </div>
 
-    <!-- Nav tabs -->
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 border-t border-slate-100 flex gap-1 overflow-x-auto py-1.5">
-      <button onclick="switchTab('ringkasan')" id="tab-nav-ringkasan" class="tab-nav px-3 py-1.5 text-xs font-medium rounded-md bg-slate-100 text-slate-900 transition-colors">
+    <!-- Nav tabs (Horizontal Smooth Scrollable Pill Bar on Mobile) -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 border-t border-slate-100 flex gap-1.5 overflow-x-auto py-2 no-scrollbar scroll-smooth">
+      <button onclick="switchTab('ringkasan')" id="tab-nav-ringkasan" class="tab-nav shrink-0 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-900 transition-all active:scale-95">
         Ringkasan Proposal
       </button>
-      <button onclick="switchTab('latar-belakang')" id="tab-nav-latar-belakang" class="tab-nav px-3 py-1.5 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+      <button onclick="switchTab('latar-belakang')" id="tab-nav-latar-belakang" class="tab-nav shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all active:scale-95">
         Latar Belakang & Masalah
       </button>
-      <button onclick="switchTab('cakupan-sistem')" id="tab-nav-cakupan-sistem" class="tab-nav px-3 py-1.5 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+      <button onclick="switchTab('cakupan-sistem')" id="tab-nav-cakupan-sistem" class="tab-nav shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all active:scale-95">
         Cakupan Sistem (5 Pilar)
       </button>
-      <button onclick="switchTab('kalkulasi')" id="tab-nav-kalkulasi" class="tab-nav px-3 py-1.5 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+      <button onclick="switchTab('kalkulasi')" id="tab-nav-kalkulasi" class="tab-nav shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all active:scale-95">
         Perbandingan Biaya
       </button>
-      <button onclick="switchTab('teknis')" id="tab-nav-teknis" class="tab-nav px-3 py-1.5 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+      <button onclick="switchTab('teknis')" id="tab-nav-teknis" class="tab-nav shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all active:scale-95">
         Spesifikasi Server & Jaringan
       </button>
-      <button onclick="switchTab('tahapan')" id="tab-nav-tahapan" class="tab-nav px-3 py-1.5 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+      <button onclick="switchTab('tahapan')" id="tab-nav-tahapan" class="tab-nav shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all active:scale-95">
         Rencana Pelaksanaan
       </button>
     </div>
   </header>
 
   <!-- Content Body -->
-  <main class="max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 flex-1 space-y-6">
+  <main class="max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 sm:py-6 flex-1 space-y-5 sm:space-y-6 pb-24 md:pb-8">
 
     <!-- ================= TAB 1: RINGKASAN ================= -->
     <section id="pane-ringkasan" class="tab-pane active space-y-6">
@@ -479,20 +488,31 @@
           <p class="text-xs text-slate-500 mt-0.5">Perhitungan estimasi penghematan kas yayasan dalam periode 1 sampai 3 tahun.</p>
         </div>
 
-        <!-- Slider -->
-        <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-3">
+        <!-- Slider & Quick Presets -->
+        <div class="p-4 bg-slate-50 border border-slate-200 rounded-lg space-y-3.5">
           <div class="flex justify-between items-center">
-            <label for="numStudents" class="text-xs font-medium text-slate-700">Simulasi Jumlah Siswa (SMP + SMA):</label>
-            <span class="px-2.5 py-1 bg-white border border-slate-200 rounded font-mono text-xs font-semibold text-slate-900">
+            <label for="numStudents" class="text-xs font-semibold text-slate-800">Simulasi Jumlah Siswa (SMP + SMA):</label>
+            <span class="px-2.5 py-1 bg-white border border-slate-300 rounded-md font-mono text-xs font-bold text-slate-900 shadow-xs">
               <span id="labelStudentCount">600</span> Siswa
             </span>
           </div>
-          <input type="range" id="numStudents" min="200" max="1200" step="50" value="600" oninput="updateCalculation()" class="w-full accent-slate-900" />
-          <div class="flex justify-between text-[11px] text-slate-400 font-mono">
-            <span>200 Siswa</span>
-            <span>600 Siswa</span>
-            <span>1.000 Siswa</span>
-            <span>1.200 Siswa</span>
+
+          <!-- Quick Touch Presets for Mobile/Tablet -->
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+            <span class="text-[10.5px] font-medium text-slate-500 shrink-0 mr-1">Pilih Cepat:</span>
+            <button type="button" onclick="setStudentCount(200)" class="preset-btn px-2.5 py-1 rounded-md bg-white border border-slate-200 text-[11px] font-medium text-slate-700 hover:border-slate-400 active:scale-95 transition-all">200 Siswa</button>
+            <button type="button" onclick="setStudentCount(600)" class="preset-btn active px-2.5 py-1 rounded-md bg-slate-900 border border-slate-900 text-[11px] font-semibold text-white active:scale-95 transition-all">600 Siswa</button>
+            <button type="button" onclick="setStudentCount(1000)" class="preset-btn px-2.5 py-1 rounded-md bg-white border border-slate-200 text-[11px] font-medium text-slate-700 hover:border-slate-400 active:scale-95 transition-all">1.000 Siswa</button>
+            <button type="button" onclick="setStudentCount(1200)" class="preset-btn px-2.5 py-1 rounded-md bg-white border border-slate-200 text-[11px] font-medium text-slate-700 hover:border-slate-400 active:scale-95 transition-all">1.200 Siswa</button>
+          </div>
+
+          <input type="range" id="numStudents" min="200" max="1200" step="50" value="600" oninput="updateCalculation()" class="w-full accent-slate-900 h-2 bg-slate-200 rounded-lg cursor-pointer" />
+          
+          <div class="flex justify-between text-[10.5px] text-slate-500 font-mono">
+            <span>200</span>
+            <span>600 (Aktual)</span>
+            <span>1.000</span>
+            <span>1.200</span>
           </div>
         </div>
 
@@ -708,30 +728,33 @@
 
   </main>
 
-  <!-- Interactive Detail Modal Dialog (Visual Executive Dashboard) -->
-  <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-[3px] flex items-center justify-center p-3 sm:p-5 hidden" onclick="handleBackdropClick(event)">
-    <div class="bg-white rounded-xl border border-slate-200 max-w-4xl w-full p-5 sm:p-6 space-y-4 shadow-2xl relative max-h-[92vh] overflow-y-auto" onclick="event.stopPropagation()">
+  <!-- Interactive Detail Modal Dialog (Responsive Bottom Sheet on Mobile / Centered Card on Desktop) -->
+  <div id="detailModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-[3px] flex items-end sm:items-center justify-center p-0 sm:p-4 hidden" onclick="handleBackdropClick(event)">
+    <div class="bg-white rounded-t-2xl sm:rounded-xl border border-slate-200 max-w-4xl w-full p-4 sm:p-6 space-y-3.5 shadow-2xl relative max-h-[88vh] sm:max-h-[92vh] overflow-y-auto" onclick="event.stopPropagation()">
       
+      <!-- Mobile Pull Handle Indicator -->
+      <div class="w-12 h-1 bg-slate-300 rounded-full mx-auto mb-1 sm:hidden"></div>
+
       <!-- Modal Header -->
-      <div class="flex items-start justify-between pb-3 border-b border-slate-100">
-        <div>
+      <div class="flex items-start justify-between pb-2.5 border-b border-slate-100">
+        <div class="pr-2">
           <span id="modalBadge" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200 uppercase tracking-wider">Kondisi Aktual</span>
-          <h3 id="modalTitle" class="text-base sm:text-lg font-bold text-slate-900 mt-1">Judul Detail</h3>
-          <p id="modalSubtitle" class="text-xs text-slate-500 mt-0.5">Perbandingan visual kondisi operasional sekolah saat ini vs sistem mandiri MBISE.</p>
+          <h3 id="modalTitle" class="text-base sm:text-lg font-bold text-slate-900 mt-1 leading-snug">Judul Detail</h3>
+          <p id="modalSubtitle" class="text-xs text-slate-500 mt-0.5 leading-relaxed">Perbandingan visual kondisi operasional sekolah saat ini vs sistem mandiri MBISE.</p>
         </div>
-        <button onclick="closeDetailModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+        <button onclick="closeDetailModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors shrink-0">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
       <!-- 1. Visual Comparison Scorecards (3 Metrics) -->
-      <div id="modalScorecards" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      <div id="modalScorecards" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
         <!-- Rendered by JS -->
       </div>
 
       <!-- 2. Visual Workflow Comparison Diagram (Before vs After) -->
-      <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-lg space-y-3">
-        <div class="text-[11px] font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+      <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2.5">
+        <div class="text-[10.5px] font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
           <i data-lucide="workflow" class="w-3.5 h-3.5 text-slate-500"></i>
           Perbandingan Alur Kerja (Workflow Comparison)
         </div>
@@ -740,7 +763,7 @@
         <div class="space-y-1">
           <div class="text-[10px] font-medium text-rose-700 flex items-center gap-1">
             <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-            Alur Kerja Saat Ini (Serba Manual & Tersebar):
+            Alur Kerja Saat Ini (Terpisah):
           </div>
           <div id="modalFlowBefore" class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-center text-[11px]">
             <!-- Rendered by JS -->
@@ -759,17 +782,29 @@
         </div>
       </div>
 
+      <!-- Mobile Segmented View Toggle (Before vs After) -->
+      <div class="grid grid-cols-2 gap-1 p-1 bg-slate-100 rounded-lg md:hidden text-xs font-semibold">
+        <button type="button" id="modalTabBtnBefore" onclick="switchModalView('before')" class="py-1.5 rounded-md bg-white text-rose-700 shadow-xs flex items-center justify-center gap-1.5 transition-all">
+          <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+          <span>Kondisi Saat Ini</span>
+        </button>
+        <button type="button" id="modalTabBtnAfter" onclick="switchModalView('after')" class="py-1.5 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5 transition-all">
+          <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span>Solusi MBISE</span>
+        </button>
+      </div>
+
       <!-- 3. Side-by-Side Detailed Reality Check (Red vs Green) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs leading-relaxed">
         
         <!-- Left: Current Reality (Red/Rose Card) -->
-        <div class="p-4 bg-rose-50/60 border border-rose-200 rounded-lg space-y-2.5">
+        <div id="modalCardBefore" class="p-3.5 sm:p-4 bg-rose-50/60 border border-rose-200 rounded-lg space-y-2.5">
           <div class="font-bold text-rose-950 flex items-center justify-between pb-1.5 border-b border-rose-200/60">
             <span class="flex items-center gap-1.5">
               <i data-lucide="x-circle" class="w-4 h-4 text-rose-600"></i>
               Kondisi Lapangan Saat Ini
             </span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-200/60 text-rose-800 font-semibold uppercase">Serba Manual</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-200/60 text-rose-800 font-semibold uppercase">Konvensional</span>
           </div>
 
           <div id="modalPointsBefore" class="space-y-2 text-rose-950/90 text-[11.5px]">
@@ -788,7 +823,7 @@
         </div>
 
         <!-- Right: MBISE Solution (Green/Emerald Card) -->
-        <div class="p-4 bg-emerald-50/60 border border-emerald-200 rounded-lg space-y-2.5">
+        <div id="modalCardAfter" class="p-3.5 sm:p-4 bg-emerald-50/60 border border-emerald-200 rounded-lg space-y-2.5 hidden md:block">
           <div class="font-bold text-emerald-950 flex items-center justify-between pb-1.5 border-b border-emerald-200/60">
             <span class="flex items-center gap-1.5">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
@@ -817,8 +852,8 @@
       <!-- Bottom Bar -->
       <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs">
         <span class="text-slate-400 text-[11px] hidden sm:inline">Tekan ESC atau klik area luar untuk menutup rincian</span>
-        <div class="flex items-center gap-2 ml-auto">
-          <button onclick="closeDetailModal()" class="px-4 py-1.5 rounded-lg bg-slate-900 text-white font-medium hover:bg-slate-800 transition-colors">
+        <div class="flex items-center gap-2 ml-auto w-full sm:w-auto">
+          <button onclick="closeDetailModal()" class="w-full sm:w-auto px-4 py-2 sm:py-1.5 rounded-lg bg-slate-900 text-white font-semibold hover:bg-slate-800 active:scale-95 transition-all text-center">
             Tutup Rincian
           </button>
         </div>
@@ -1212,6 +1247,28 @@
       lucide.createIcons();
     }
 
+    function switchModalView(mode) {
+      const cardBefore = document.getElementById('modalCardBefore');
+      const cardAfter = document.getElementById('modalCardAfter');
+      const btnBefore = document.getElementById('modalTabBtnBefore');
+      const btnAfter = document.getElementById('modalTabBtnAfter');
+
+      if (!cardBefore || !cardAfter || !btnBefore || !btnAfter) return;
+
+      if (mode === 'before') {
+        cardBefore.classList.remove('hidden');
+        cardAfter.classList.add('hidden');
+        btnBefore.className = 'py-1.5 rounded-md bg-white text-rose-700 shadow-xs flex items-center justify-center gap-1.5 transition-all';
+        btnAfter.className = 'py-1.5 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5 transition-all';
+      } else {
+        cardBefore.classList.add('hidden');
+        cardAfter.classList.remove('hidden');
+        btnBefore.className = 'py-1.5 rounded-md text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5 transition-all';
+        btnAfter.className = 'py-1.5 rounded-md bg-white text-emerald-700 shadow-xs flex items-center justify-center gap-1.5 transition-all';
+      }
+      lucide.createIcons();
+    }
+
     function closeDetailModal() {
       document.getElementById('detailModal').classList.add('hidden');
     }
@@ -1228,21 +1285,51 @@
 
     function switchTab(name) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      
+      // Update desktop tabs
       document.querySelectorAll('.tab-nav').forEach(el => {
-        el.classList.remove('bg-slate-100', 'text-slate-900');
-        el.classList.add('text-slate-600');
+        el.classList.remove('bg-slate-100', 'text-slate-900', 'font-semibold');
+        el.classList.add('text-slate-600', 'font-medium');
+      });
+
+      // Update mobile bottom nav
+      document.querySelectorAll('.bnav-btn').forEach(el => {
+        el.classList.remove('text-slate-950', 'bg-slate-100', 'font-bold');
+        el.classList.add('text-slate-500', 'font-medium');
       });
 
       const pane = document.getElementById('pane-' + name);
       const nav = document.getElementById('tab-nav-' + name);
+      const bnav = document.getElementById('bnav-' + name);
+
       if (pane) pane.classList.add('active');
       if (nav) {
-        nav.classList.add('bg-slate-100', 'text-slate-900');
-        nav.classList.remove('text-slate-600');
+        nav.classList.add('bg-slate-100', 'text-slate-900', 'font-semibold');
+        nav.classList.remove('text-slate-600', 'font-medium');
+      }
+      if (bnav) {
+        bnav.classList.add('text-slate-950', 'bg-slate-100', 'font-bold');
+        bnav.classList.remove('text-slate-500', 'font-medium');
       }
 
       lucide.createIcons();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setStudentCount(count) {
+      const slider = document.getElementById('numStudents');
+      if (slider) {
+        slider.value = count;
+        updateCalculation();
+      }
+
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        if (btn.innerText.includes(count.toString())) {
+          btn.className = 'preset-btn px-2.5 py-1 rounded-md bg-slate-900 border border-slate-900 text-[11px] font-semibold text-white active:scale-95 transition-all';
+        } else {
+          btn.className = 'preset-btn px-2.5 py-1 rounded-md bg-white border border-slate-200 text-[11px] font-medium text-slate-700 hover:border-slate-400 active:scale-95 transition-all';
+        }
+      });
     }
 
     function updateCalculation() {
@@ -1274,5 +1361,33 @@
       updateCalculation();
     });
   </script>
+
+  <!-- Mobile Bottom Navigation Bar (App-like UX for Phones & Tablets) -->
+  <nav class="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-40 md:hidden flex items-center justify-around py-1.5 px-1 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] no-print">
+    <button onclick="switchTab('ringkasan')" id="bnav-ringkasan" class="bnav-btn flex flex-col items-center gap-0.5 py-1 px-2.5 rounded-lg text-slate-950 bg-slate-100 font-bold transition-all active:scale-90">
+      <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+      <span class="text-[9.5px]">Ringkasan</span>
+    </button>
+    <button onclick="switchTab('latar-belakang')" id="bnav-latar-belakang" class="bnav-btn flex flex-col items-center gap-0.5 py-1 px-2 rounded-lg text-slate-500 font-medium transition-all active:scale-90">
+      <i data-lucide="alert-circle" class="w-4 h-4"></i>
+      <span class="text-[9.5px]">Masalah</span>
+    </button>
+    <button onclick="switchTab('cakupan-sistem')" id="bnav-cakupan-sistem" class="bnav-btn flex flex-col items-center gap-0.5 py-1 px-2 rounded-lg text-slate-500 font-medium transition-all active:scale-90">
+      <i data-lucide="layers" class="w-4 h-4"></i>
+      <span class="text-[9.5px]">5 Pilar</span>
+    </button>
+    <button onclick="switchTab('kalkulasi')" id="bnav-kalkulasi" class="bnav-btn flex flex-col items-center gap-0.5 py-1 px-2 rounded-lg text-slate-500 font-medium transition-all active:scale-90">
+      <i data-lucide="calculator" class="w-4 h-4"></i>
+      <span class="text-[9.5px]">Biaya</span>
+    </button>
+    <button onclick="switchTab('teknis')" id="bnav-teknis" class="bnav-btn flex flex-col items-center gap-0.5 py-1 px-2 rounded-lg text-slate-500 font-medium transition-all active:scale-90">
+      <i data-lucide="server" class="w-4 h-4"></i>
+      <span class="text-[9.5px]">Server</span>
+    </button>
+    <button onclick="switchTab('tahapan')" id="bnav-tahapan" class="bnav-btn flex flex-col items-center gap-0.5 py-1 px-2 rounded-lg text-slate-500 font-medium transition-all active:scale-90">
+      <i data-lucide="git-merge" class="w-4 h-4"></i>
+      <span class="text-[9.5px]">Fase</span>
+    </button>
+  </nav>
 </body>
 </html>
