@@ -50,34 +50,45 @@
       .tab-pane { display: block !important; page-break-after: always; }
       body { background: white; }
     }
-    #adminEditor {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      line-height: 1.5;
-      tab-size: 2;
-      resize: none;
-      outline: none;
-      min-height: 300px;
+    /* Inline Editor Styles */
+    .edit-mode .editable { position: relative; cursor: text; border-radius: 4px; transition: all 0.15s; }
+    .edit-mode .editable:hover { outline: 2px dashed rgba(59,130,246,0.5); outline-offset: 2px; }
+    .edit-mode .editable:focus { outline: 2px solid #3b82f6; outline-offset: 2px; background: rgba(59,130,246,0.03); }
+    .edit-mode .editable::after {
+      content: '\270E';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 18px;
+      height: 18px;
+      background: #3b82f6;
+      color: white;
+      border-radius: 50%;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      z-index: 10;
     }
-    #adminEditor:focus {
-      box-shadow: 0 0 0 2px rgba(15,23,42,0.2);
+    .edit-mode .editable:hover::after { opacity: 1; }
+    .edit-mode .editable:focus::after { opacity: 0; }
+    #adminFloatingBar {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      z-index: 45;
+      display: none;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
     }
-    #previewFrame {
-      width: 100%;
-      height: 100%;
-      min-height: 300px;
-      border: none;
-      background: white;
+    @media (min-width: 768px) {
+      #adminFloatingBar { bottom: 24px; right: 24px; }
     }
-    .admin-split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: #e2e8f0;
-    }
-    @media (max-width: 768px) {
-      .admin-split { grid-template-columns: 1fr; }
-    }
+    #adminFloatingBar.show { display: flex; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col text-slate-900 text-sm">
@@ -103,8 +114,8 @@
           <span class="hidden sm:inline">Hitung Anggaran</span>
           <span class="sm:hidden">Kalkulator</span>
         </button>
-        <button onclick="openAdminAuth()" title="Admin" class="p-1.5 rounded-md border border-slate-200 text-slate-400 bg-white hover:bg-slate-50 hover:text-slate-600 transition-colors">
-          <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+        <button onclick="toggleEditMode()" id="adminEditBtn" title="Edit Mode" class="p-1.5 rounded-md border border-slate-200 text-slate-400 bg-white hover:bg-slate-50 hover:text-slate-600 transition-colors">
+          <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
         </button>
       </div>
     </div>
@@ -1392,74 +1403,119 @@
       updateCalculation();
     });
 
-    // ==================== ADMIN EDITOR ====================
+    // ==================== INLINE EDITOR ====================
     const ADMIN_PASSWORD_HASH = '3c572a17e9270209da12a06a7a532651cb3b757b67beebbf6abca5357ce70aa0';
     const GITHUB_REPO = 'ictcodehub/MBISE';
-    const GITHUB_FILE = 'index.html';
     const GITHUB_BRANCH = 'main';
-
     let adminToken = localStorage.getItem('mbise_admin_token') || '';
-    let adminOriginalContent = '';
-    let adminPreviewVisible = true;
+    let editMode = false;
+    let originalBodyHTML = '';
+    let hasUnsavedChanges = false;
 
-    function openAdminAuth() {
-      document.getElementById('adminModal').classList.remove('hidden');
-      document.getElementById('adminStatePassword').classList.remove('hidden');
-      document.getElementById('adminStateToken').classList.add('hidden');
-      document.getElementById('adminStateEditor').classList.add('hidden');
-      document.getElementById('adminPasswordError').classList.add('hidden');
-      document.getElementById('adminPasswordInput').value = '';
-      document.getElementById('adminModalTitle').textContent = 'Admin';
-      document.getElementById('adminPasswordInput').focus();
-      lucide.createIcons();
-    }
-
-    function closeAdminModal(e) {
-      if (e && e.target !== e.currentTarget) return;
-      document.getElementById('adminModal').classList.add('hidden');
-    }
-
-    async function verifyAdminPassword() {
-      const input = document.getElementById('adminPasswordInput').value;
-      const hash = await sha256(input);
-      if (hash === ADMIN_PASSWORD_HASH) {
-        document.getElementById('adminPasswordError').classList.add('hidden');
-        if (adminToken) {
-          openEditor();
-        } else {
-          document.getElementById('adminStatePassword').classList.add('hidden');
-          document.getElementById('adminStateToken').classList.remove('hidden');
-          document.getElementById('adminTokenInput').focus();
-          lucide.createIcons();
-        }
-      } else {
-        document.getElementById('adminPasswordError').classList.remove('hidden');
-        document.getElementById('adminPasswordInput').value = '';
-        document.getElementById('adminPasswordInput').focus();
-      }
+    function toggleEditMode() {
+      if (editMode) { exitEditMode(); } else { promptPassword(); }
     }
 
     async function sha256(message) {
-      const msgBuffer = new TextEncoder().encode(message);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      const buf = new TextEncoder().encode(message);
+      const hash = await crypto.subtle.digest('SHA-256', buf);
+      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    function saveAdminToken() {
-      const token = document.getElementById('adminTokenInput').value.trim();
-      if (!token) {
-        document.getElementById('adminTokenError').textContent = 'Token tidak boleh kosong.';
-        document.getElementById('adminTokenError').classList.remove('hidden');
-        return;
+    function promptPassword() {
+      const pw = prompt('Password admin:');
+      if (pw === null) return;
+      sha256(pw).then(hash => {
+        if (hash !== ADMIN_PASSWORD_HASH) { alert('Password salah.'); return; }
+        if (!adminToken) {
+          const t = prompt('GitHub PAT (Contents: Read & Write):');
+          if (t === null) return;
+          adminToken = t.trim();
+          localStorage.setItem('mbise_admin_token', adminToken);
+        }
+        enterEditMode();
+      });
+    }
+
+    function enterEditMode() {
+      editMode = true;
+      originalBodyHTML = document.querySelector('main').innerHTML;
+      document.body.classList.add('edit-mode');
+      document.querySelectorAll('main h1, main h2, main h3, main h4, main p, main li, main td, main th, main span, main strong, main code, main a').forEach(el => {
+        if (el.closest('button') || el.closest('nav') || el.closest('header') || el.closest('.no-print')) return;
+        if (el.children.length === 0 || el.tagName === 'A' || el.tagName === 'STRONG' || el.tagName === 'CODE' || el.tagName === 'SPAN') {
+          el.classList.add('editable');
+          el.setAttribute('contenteditable', 'false');
+          el.addEventListener('focus', () => el.setAttribute('contenteditable', 'true'));
+          el.addEventListener('blur', () => { el.setAttribute('contenteditable', 'false'); if (el.innerHTML !== el.dataset.orig) markChanged(); });
+          el.dataset.orig = el.innerHTML;
+        }
+      });
+      document.getElementById('adminFloatingBar').classList.add('show');
+      document.getElementById('adminEditBtn').classList.add('text-blue-600', 'border-blue-300', 'bg-blue-50');
+      lucide.createIcons();
+    }
+
+    function exitEditMode() {
+      if (hasUnsavedChanges && !confirm('Ada perubahan belum disimpan. Yakin keluar?')) return;
+      editMode = false;
+      document.body.classList.remove('edit-mode');
+      document.querySelectorAll('.editable').forEach(el => { el.removeAttribute('contenteditable'); el.classList.remove('editable'); delete el.dataset.orig; });
+      document.getElementById('adminFloatingBar').classList.remove('show');
+      document.getElementById('adminEditBtn').classList.remove('text-blue-600', 'border-blue-300', 'bg-blue-50');
+      hasUnsavedChanges = false;
+      updateSaveStatus('');
+    }
+
+    function markChanged() { hasUnsavedChanges = true; updateSaveStatus('● Unsaved changes'); document.getElementById('adminSaveStatus').className = 'text-xs text-amber-600 font-medium'; }
+    function updateSaveStatus(text) { document.getElementById('adminSaveStatus').textContent = text; }
+
+    function serializeBody() {
+      const clone = document.querySelector('main').cloneNode(true);
+      clone.querySelectorAll('.editable').forEach(el => { el.removeAttribute('contenteditable'); el.classList.remove('editable'); delete el.dataset.orig; });
+      return clone.innerHTML;
+    }
+
+    async function adminSaveToGitHub() {
+      if (!adminToken) { alert('Token tidak ada. Keluar dan masuk lagi untuk input token.'); return; }
+      const saveBtn = document.getElementById('adminSaveBtn');
+      saveBtn.disabled = true; saveBtn.innerHTML = '<span class="animate-pulse">Saving...</span>';
+      updateSaveStatus('Menyimpan ke GitHub...');
+      try {
+        const [indexResp, readmeResp] = await Promise.all([
+          fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/index.html?ref=${GITHUB_BRANCH}`, { headers: { 'Authorization': `Bearer ${adminToken}` } }),
+          fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/README.md?ref=${GITHUB_BRANCH}`, { headers: { 'Authorization': `Bearer ${adminToken}` } })
+        ]);
+        if (!indexResp.ok) throw new Error(`Fetch index.html: ${indexResp.status}`);
+        const indexData = await indexResp.json();
+        let readmeSha = null;
+        if (readmeResp.ok) readmeSha = (await readmeResp.json()).sha;
+
+        const origResp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/index.html?ref=${GITHUB_BRANCH}`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
+        const origData = await origResp.json();
+        const origHTML = decodeURIComponent(escape(atob(origData.content.replace(/\n/g, ''))));
+        const newBodyContent = serializeBody();
+        const newHTML = origHTML.replace(/<main[\s\S]*?<\/main>/, `<main class="max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 sm:py-6 flex-1 space-y-5 sm:space-y-6 pb-24 md:pb-8">\n${newBodyContent}\n  </main>`);
+        const readmeContent = htmlToMarkdown(newHTML);
+
+        const now = new Date();
+        const msg = `edit: update proposal via live editor (${now.toISOString().replace('T', ' ').slice(0, 19)})`;
+        const [idxRes, rmRes] = await Promise.all([
+          fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/index.html`, { method: 'PUT', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg, content: btoa(unescape(encodeURIComponent(newHTML))), sha: indexData.sha, branch: GITHUB_BRANCH }) }),
+          fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/README.md`, { method: 'PUT', headers: { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg, content: btoa(unescape(encodeURIComponent(readmeContent))), sha: readmeSha, branch: GITHUB_BRANCH }) })
+        ]);
+        if (!idxRes.ok) throw new Error(`index.html: ${(await idxRes.json()).message || idxRes.status}`);
+        if (!rmRes.ok) throw new Error(`README.md: ${(await rmRes.json()).message || rmRes.status}`);
+        hasUnsavedChanges = false;
+        updateSaveStatus('Tersimpan! GitHub Pages update ~1 menit.');
+        document.getElementById('adminSaveStatus').className = 'text-xs text-emerald-600 font-medium';
+      } catch (err) {
+        updateSaveStatus('Error: ' + err.message);
+        document.getElementById('adminSaveStatus').className = 'text-xs text-red-600';
+      } finally {
+        saveBtn.disabled = false; saveBtn.innerHTML = '<i data-lucide="upload" class="w-3.5 h-3.5"></i> Save';
+        lucide.createIcons();
       }
-      adminToken = token;
-      localStorage.setItem('mbise_admin_token', token);
-      openEditor();
-    }
-
-    function skipAdminToken() {
-      openEditor();
     }
 
     function htmlToMarkdown(html) {
@@ -1508,176 +1564,13 @@
       return md;
     }
 
-    async function openEditor() {
-      document.getElementById('adminStatePassword').classList.add('hidden');
-      document.getElementById('adminStateToken').classList.add('hidden');
-      document.getElementById('adminStateEditor').classList.remove('hidden');
-      document.getElementById('adminModalTitle').textContent = 'Editor';
-      document.getElementById('adminSaveStatus').textContent = 'Loading...';
-
-      try {
-        const resp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}?ref=${GITHUB_BRANCH}`, {
-          headers: adminToken ? { 'Authorization': `Bearer ${adminToken}` } : {}
-        });
-        if (!resp.ok) throw new Error(`GitHub API error: ${resp.status}`);
-        const data = await resp.json();
-        adminOriginalContent = atob(data.content.replace(/\n/g, ''));
-        document.getElementById('adminEditor').value = adminOriginalContent;
-        document.getElementById('adminSaveStatus').textContent = '';
-        adminLivePreview();
-        lucide.createIcons();
-      } catch (err) {
-        document.getElementById('adminSaveStatus').textContent = 'Gagal load: ' + err.message;
-      }
-    }
-
-    function adminLivePreview() {
-      const content = document.getElementById('adminEditor').value;
-      const frame = document.getElementById('previewFrame');
-      if (!frame) return;
-      const doc = frame.contentDocument || frame.contentWindow.document;
-      doc.open();
-      doc.write(content);
-      doc.close();
-    }
-
-    function adminTogglePreview() {
-      adminPreviewVisible = !adminPreviewVisible;
-      const container = document.getElementById('adminPreviewContainer');
-      const toggle = document.getElementById('adminPreviewToggle');
-      if (adminPreviewVisible) {
-        container.classList.remove('hidden');
-        toggle.innerHTML = '<i data-lucide="eye-off" class="w-3.5 h-3.5"></i> Sembunyikan Preview';
-      } else {
-        container.classList.add('hidden');
-        toggle.innerHTML = '<i data-lucide="eye" class="w-3.5 h-3.5"></i> Preview';
-      }
+    document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-    }
-
-    function adminFormatCode() {
-      const editor = document.getElementById('adminEditor');
-      let code = editor.value;
-      // Simple HTML indent formatter
-      code = code.replace(/>\s*</g, '>\n<');
-      const lines = code.split('\n');
-      let indent = 0;
-      const formatted = lines.map(line => {
-        line = line.trim();
-        if (!line) return '';
-        if (line.match(/^<\/(head|body|html|main|section|div|nav|header|script|style)/)) indent = Math.max(0, indent - 1);
-        const result = '  '.repeat(indent) + line;
-        if (line.match(/^<(head|body|html|main|section|div|nav|header|script|style)[^/]*>/) && !line.match(/\/>$/)) indent++;
-        return result;
-      });
-      editor.value = formatted.join('\n');
-      adminLivePreview();
-    }
-
-    async function adminSaveToGitHub() {
-      if (!adminToken) {
-        document.getElementById('adminSaveStatus').textContent = 'Token tidak ada. Tidak bisa save.';
-        document.getElementById('adminSaveStatus').className = 'text-xs text-red-600';
-        return;
-      }
-
-      const content = document.getElementById('adminEditor').value;
-      const saveBtn = document.getElementById('adminSaveBtn');
-      const status = document.getElementById('adminSaveStatus');
-
-      saveBtn.disabled = true;
-      saveBtn.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Saving...';
-      status.textContent = 'Menyimpan ke GitHub...';
-      status.className = 'text-xs text-slate-500';
-      lucide.createIcons();
-
-      try {
-        // Get current file SHAs (required for update)
-        const [indexResp, readmeResp] = await Promise.all([
-          fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/index.html?ref=${GITHUB_BRANCH}`, {
-            headers: { 'Authorization': `Bearer ${adminToken}` }
-          }),
-          fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/README.md?ref=${GITHUB_BRANCH}`, {
-            headers: { 'Authorization': `Bearer ${adminToken}` }
-          })
-        ]);
-
-        if (!indexResp.ok) throw new Error(`Gagal fetch index.html: ${indexResp.status}`);
-        const indexData = await indexResp.json();
-
-        let readmeSha = null;
-        if (readmeResp.ok) {
-          const readmeData = await readmeResp.json();
-          readmeSha = readmeData.sha;
-        }
-
-        const readmeContent = htmlToMarkdown(content);
-        const now = new Date();
-        const timestamp = now.toISOString().replace('T', ' ').slice(0, 19);
-        const commitMsg = `edit: update proposal via live editor (${timestamp})`;
-
-        // Save both files in parallel
-        const [indexResult, readmeResult] = await Promise.all([
-          fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/index.html`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${adminToken}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              message: commitMsg,
-              content: btoa(unescape(encodeURIComponent(content))),
-              sha: indexData.sha,
-              branch: GITHUB_BRANCH
-            })
-          }),
-          fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/README.md`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${adminToken}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              message: commitMsg,
-              content: btoa(unescape(encodeURIComponent(readmeContent))),
-              sha: readmeSha,
-              branch: GITHUB_BRANCH
-            })
-          })
-        ]);
-
-        if (!indexResult.ok) {
-          const err = await indexResult.json();
-          throw new Error(`index.html: ${err.message || indexResult.status}`);
-        }
-        if (!readmeResult.ok) {
-          const err = await readmeResult.json();
-          throw new Error(`README.md: ${err.message || readmeResult.status}`);
-        }
-
-        adminOriginalContent = content;
-        status.textContent = 'Tersimpan! index.html + README.md ter-sync. GitHub Pages update ~1 menit.';
-        status.className = 'text-xs text-emerald-600 font-medium';
-      } catch (err) {
-        status.textContent = 'Error: ' + err.message;
-        status.className = 'text-xs text-red-600';
-      } finally {
-        saveBtn.disabled = false;
-        saveBtn.innerHTML = '<i data-lucide="upload" class="w-3.5 h-3.5"></i> Save to GitHub';
-        lucide.createIcons();
-      }
-    }
-
-    function closeAdminFullPreview() {
-      document.getElementById('adminFullPreviewModal').classList.add('hidden');
-      document.getElementById('adminFullPreviewModal').classList.remove('flex');
-    }
+      updateCalculation();
+    });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeAdminModal();
-        closeAdminFullPreview();
-      }
+      if (e.key === 'Escape' && editMode) exitEditMode();
     });
   </script>
 
@@ -1709,83 +1602,17 @@
     </button>
   </nav>
 
-  <!-- Admin Auth Modal -->
-  <div id="adminModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-[3px] flex items-end sm:items-center justify-center p-0 sm:p-4 hidden" onclick="closeAdminModal(event)">
-    <div class="bg-white rounded-t-2xl sm:rounded-xl border border-slate-200 w-full max-w-5xl p-4 sm:p-5 space-y-3 shadow-2xl relative max-h-[92vh] overflow-hidden flex flex-col" onclick="event.stopPropagation()">
-
-      <!-- Modal Header -->
-      <div class="flex items-center justify-between pb-2 border-b border-slate-100 shrink-0">
-        <div class="flex items-center gap-2">
-          <i data-lucide="lock" class="w-4 h-4 text-slate-400"></i>
-          <span id="adminModalTitle" class="text-sm font-semibold text-slate-900">Admin</span>
-        </div>
-        <button onclick="closeAdminModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <!-- State 1: Password Prompt -->
-      <div id="adminStatePassword" class="space-y-3">
-        <p class="text-xs text-slate-500">Masukkan password admin untuk mengakses editor.</p>
-        <div class="flex gap-2">
-          <input id="adminPasswordInput" type="password" placeholder="Password" class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900/20 focus:border-slate-400 outline-none transition-all" onkeydown="if(event.key==='Enter')verifyAdminPassword()" />
-          <button onclick="verifyAdminPassword()" class="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors">Masuk</button>
-        </div>
-        <p id="adminPasswordError" class="text-xs text-red-600 hidden">Password salah.</p>
-      </div>
-
-      <!-- State 2: Token Prompt -->
-      <div id="adminStateToken" class="space-y-3 hidden">
-        <p class="text-xs text-slate-500">Masukkan GitHub Personal Access Token (PAT) dengan akses <strong>Contents: Read and write</strong> ke repo <code class="bg-slate-100 px-1 rounded">ictcodehub/MBISE</code>.</p>
-        <div class="flex gap-2">
-          <input id="adminTokenInput" type="password" placeholder="ghp_xxxxxxxxxxxx" class="flex-1 px-3 py-2 text-sm font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900/20 focus:border-slate-400 outline-none transition-all" onkeydown="if(event.key==='Enter')saveAdminToken()" />
-          <button onclick="saveAdminToken()" class="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors">Simpan</button>
-        </div>
-        <div class="flex items-center justify-between">
-          <p id="adminTokenError" class="text-xs text-red-600 hidden"></p>
-          <button onclick="skipAdminToken()" class="text-xs text-slate-400 hover:text-slate-600 underline">Lewati (mode view-only)</button>
-        </div>
-      </div>
-
-      <!-- State 3: Editor -->
-      <div id="adminStateEditor" class="flex-1 flex flex-col hidden overflow-hidden min-h-0">
-        <!-- Toolbar -->
-        <div class="flex items-center justify-between py-2 border-b border-slate-100 shrink-0">
-          <div class="flex items-center gap-2">
-            <button onclick="adminTogglePreview()" id="adminPreviewToggle" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors flex items-center gap-1.5">
-              <i data-lucide="eye" class="w-3.5 h-3.5"></i> Preview
-            </button>
-            <button onclick="adminFormatCode()" class="px-3 py-1.5 text-xs font-medium rounded-lg text-slate-500 hover:bg-slate-100 transition-colors flex items-center gap-1.5">
-              <i data-lucide="align-left" class="w-3.5 h-3.5"></i> Format
-            </button>
-          </div>
-          <div class="flex items-center gap-2">
-            <span id="adminSaveStatus" class="text-xs text-slate-400"></span>
-            <button onclick="adminSaveToGitHub()" id="adminSaveBtn" class="px-4 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-xs">
-              <i data-lucide="upload" class="w-3.5 h-3.5"></i> Save to GitHub
-            </button>
-          </div>
-        </div>
-        <!-- Editor + Preview Split -->
-        <div class="admin-split flex-1 min-h-0 mt-2">
-          <div class="relative flex flex-col min-h-0">
-            <textarea id="adminEditor" spellcheck="false" class="w-full h-full bg-slate-50 border border-slate-200 rounded-lg p-3 overflow-auto" oninput="adminLivePreview()"></textarea>
-          </div>
-          <div class="relative min-h-0 border border-slate-200 rounded-lg overflow-hidden bg-white hidden md:block" id="adminPreviewContainer">
-            <iframe id="previewFrame" sandbox="allow-same-origin"></iframe>
-          </div>
-        </div>
-      </div>
+  <!-- Floating Save Bar (Inline Editor) -->
+  <div id="adminFloatingBar">
+    <div class="bg-white rounded-xl shadow-lg border border-slate-200 px-3 py-2 flex items-center gap-2">
+      <span id="adminSaveStatus" class="text-xs text-slate-400"></span>
+      <button onclick="adminSaveToGitHub()" id="adminSaveBtn" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-xs">
+        <i data-lucide="upload" class="w-3.5 h-3.5"></i> Save
+      </button>
+      <button onclick="exitEditMode()" class="px-2 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+        Exit
+      </button>
     </div>
-  </div>
-
-  <!-- Admin Full Preview Modal -->
-  <div id="adminFullPreviewModal" class="fixed inset-0 z-50 bg-white hidden flex-col">
-    <div class="flex items-center justify-between px-4 py-2 border-b border-slate-200 shrink-0">
-      <span class="text-sm font-semibold text-slate-900">Preview</span>
-      <button onclick="closeAdminFullPreview()" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">Tutup Preview</button>
-    </div>
-    <iframe id="fullPreviewFrame" class="flex-1 w-full border-none" sandbox="allow-same-origin"></iframe>
   </div>
 </body>
 </html>
