@@ -65,13 +65,6 @@
         el.setAttribute('contenteditable', 'true');
         el.dataset.orig = el.innerHTML;
         el.addEventListener('blur', onEditBlur);
-        // Inject resize handles (4 corners, width-only reflow)
-        ['nw','ne','sw','se'].forEach(pos => {
-          const h = document.createElement('div');
-          h.className = 'resize-handle resize-' + pos;
-          h.addEventListener('mousedown', e => startResize(e, el, pos));
-          el.appendChild(h);
-        });
       });
       document.getElementById('adminFloatingBar').classList.add('show');
       document.getElementById('adminEditBtn').classList.add('!text-blue-600', '!border-blue-300', '!bg-blue-50');
@@ -93,7 +86,6 @@
       document.querySelectorAll('.editable').forEach(el => {
         el.removeAttribute('contenteditable');
         el.classList.remove('editable');
-        el.querySelectorAll('.resize-handle').forEach(h => h.remove());
         el.removeEventListener('blur', onEditBlur);
         delete el.dataset.orig;
       });
@@ -108,41 +100,9 @@
       clone.querySelectorAll('.editable').forEach(el => {
         el.removeAttribute('contenteditable');
         el.classList.remove('editable');
-        el.querySelectorAll('.resize-handle').forEach(h => h.remove());
         delete el.dataset.orig;
       });
       return clone.innerHTML;
-    }
-
-    // Resize handle logic (width-only reflow)
-    function startResize(e, el, pos) {
-      e.preventDefault();
-      e.stopPropagation();
-      el.classList.add('resizing');
-      const startX = e.clientX;
-      const startW = el.offsetWidth;
-      const onMove = (ev) => {
-        const dx = ev.clientX - startX;
-        let newW;
-        if (pos === 'nw' || pos === 'sw') {
-          newW = startW - dx;
-        } else {
-          newW = startW + dx;
-        }
-        newW = Math.max(120, newW);
-        el.style.width = newW + 'px';
-        el.style.minHeight = el.scrollHeight + 'px';
-      };
-      const onUp = () => {
-        el.classList.remove('resizing');
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
-        hasUnsavedChanges = true;
-        document.getElementById('adminSaveStatus').textContent = 'Unsaved changes';
-        document.getElementById('adminSaveStatus').className = 'text-xs text-amber-600 font-medium';
-      };
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
     }
 
     async function adminSaveToGitHub() {
@@ -160,9 +120,7 @@
         let readmeSha = null;
         if (readmeResp.ok) readmeSha = (await readmeResp.json()).sha;
 
-        const origResp = await fetch('https://api.github.com/repos/' + GITHUB_REPO + '/contents/index.html?ref=' + GITHUB_BRANCH, { headers: { 'Authorization': 'Bearer ' + adminToken } });
-        const origData = await origResp.json();
-        const origHTML = decodeURIComponent(escape(atob(origData.content.replace(/\n/g, ''))));
+        const origHTML = decodeURIComponent(escape(atob(indexData.content.replace(/\n/g, ''))));
         const newBodyContent = serializeBody();
         const mainRe = /<main[\s\S]*?<\/main>/;
         const mainOpen = '<main class="max-w-6xl w-full mx-auto px-4 sm:px-6 py-4 sm:py-6 flex-1 space-y-5 sm:space-y-6 pb-24 md:pb-8">\n';
