@@ -11,7 +11,7 @@
         flowBefore: [
           { step: '1. Inovasi Mandiri SMP-SMA', desc: 'Portal guru piket & weekly agenda' },
           { step: '2. Administrasi Terpisah', desc: 'Jurnal PJJ & catatan di spreadsheet' },
-          { step: '3. Agenda Konvensional SD', desc: 'Pencatatan agenda di buku fisik' },
+          { step: '3. Agenda Terpisah SD', desc: 'Pencatatan agenda di kanal tersendiri' },
           { step: '4. Format Parsial', desc: 'Belum terhubung ke satu sistem' }
         ],
         flowAfter: [
@@ -23,16 +23,16 @@
         pointsBefore: [
           '<strong>Inisiatif Digital yang Telah Dirintis SMP-SMA:</strong> Kepala Sekolah SMA telah berinisiatif membangun portal guru mandiri di <code class="bg-rose-100 px-1 rounded">s.id/portalgurumb2jshs</code> yang memuat web app presensi piket (<code class="bg-rose-100 px-1 rounded">student-attendance-mb2.vercel.app</code>) dan agenda mingguan (<code class="bg-rose-100 px-1 rounded">weekly-agenda-mb2.vercel.app</code>). Inisiatif baik ini saat ini masih berada di hosting cloud publik terpisah, sehingga perlu diwadahi di server internal sekolah agar lebih stabil, aman, dan terbebas dari limitasi kuota.',
           '<strong>Administrasi Dokumen Terpisah:</strong> Berbagai operasional rutin seperti Jurnal PJJ, Catatan Khusus Wali Kelas, Formulir Request Barang Guru, dan Administrasi Pembelajaran saat ini masih tersebar di tautan Google Sheets dan Google Drive yang berdiri sendiri.',
-          '<strong>Peluang Digitalisasi Agenda di Jenjang SD:</strong> Berbeda dengan jenjang SMP-SMA yang sudah mulai memakai agenda web, pada jenjang SD pencatatan Weekly Agenda saat ini masih berjalan secara konvensional di buku tulis fisik, sehingga menjadi peluang besar untuk ditingkatkan ke format digital yang rapi dan mudah dipantau orang tua.',
+          '<strong>Peluang Peningkatan & Standardisasi Agenda Lintas Jenjang:</strong> Penyatuan format Weekly Agenda ke dalam sistem digital terpusat membuka peluang besar bagi seluruh jenjang untuk memiliki arsip agenda pembelajaran yang seragam, rapi, dan transparan bagi pimpinan serta orang tua murid.',
           '<strong>Kebutuhan Database Terpusat Sekolah:</strong> Belum tersedianya basis data terpadu antarpengelola dan jenjang membuat proses rekapitulasi data sekolah membutuhkan waktu koordinasi manual antarunit.'
         ],
         pointsAfter: [
           '<strong>Mengadopsi & Memperkuat Inovasi Pimpinan/Guru:</strong> Inisiatif web presensi piket dan weekly agenda yang telah dirintis Kepsek SMA kita integrasikan secara resmi ke dalam MBISE, disempurnakan fiturnya, dan dijalankan di server lokal sekolah dengan keandalan penuh.',
-          '<strong>Digitalisasi Ramah untuk Jenjang SD:</strong> Menghadirkan modul Weekly Agenda digital yang praktis bagi guru, siswa, dan orang tua SD, menggantikan buku tulis fisik menjadi arsip digital yang rapi dan mudah diakses.',
+          '<strong>Format Digital Terpusat Seluruh Jenjang:</strong> Menghadirkan modul Weekly Agenda digital yang terintegrasi langsung dengan portal orang tua, menggantikan pencatatan terpisah menjadi arsip digital yang rapi, transparan, dan mudah diakses kapan pun.',
           '<strong>Penyatuan Data ke Basis Data Terpusat (PostgreSQL):</strong> Menyatukan alur presensi piket, agenda kelas, jurnal PJJ, catatan pembinaan siswa, dan administrasi sekolah ke dalam satu sistem database terpadu.',
           '<strong>Kedaulatan & Keamanan Data Sekolah:</strong> Seluruh data rekam jejak siswa dan operasional sekolah tersimpan aman di server Proxmox di lingkungan sekolah sendiri dengan pencadangan (backup) otomatis berkala.'
         ],
-        impact: 'Inisiatif aplikasi dan data yang masih terpisah di berbagai platform eksternal serta catatan kertas memerlukan wadah terpadu agar tidak terkendala batasan kuota layanan luar dan mempermudah rekapitulasi.',
+        impact: 'Inisiatif aplikasi dan data yang masih terpisah di berbagai platform eksternal memerlukan wadah terpadu agar tidak terkendala batasan kuota layanan luar dan mempermudah konsolidasi pelaporan.',
         solution: 'MBISE hadir menyinergikan seluruh inisiatif guru dan pimpinan unit menjadi satu ekosistem resmi yang profesional, aman, berdaulat, serta memberikan kemudahan administrasi bagi seluruh jenjang.'
       },
       'software-cost': {
@@ -42,7 +42,7 @@
         metrics: [
           { label: 'Biaya Sewa Software', before: 'Rp 108 Jt / tahun', after: 'Rp 0 / tahun', highlight: 'Hemat 100%' },
           { label: 'Biaya Cloud / Request', before: 'Bayar per Klik Data', after: 'Lokal Bebas Kuota', highlight: 'Bebas Limit' },
-          { label: 'Kepemilikan Aset', before: 'Sewa Hangus', after: 'Aset Tetap Yayasan', highlight: 'Milik Sendiri' }
+          { label: 'Kepemilikan Aset', before: 'Sewa Hangus', after: 'Aset Resmi Sekolah', highlight: 'Milik Sendiri' }
         ],
         flowBefore: [
           { step: '1. Cloud Firebase', desc: 'Layanan cloud Google' },
@@ -64,10 +64,10 @@
         pointsAfter: [
           '<strong>Rp 0 Biaya Langganan:</strong> Backend, basis data, dan aplikasi berjalan di server Proxmox mandiri tanpa perantara vendor cloud luar.',
           '<strong>Kapasitas Tanpa Batas:</strong> Seluruh siswa dari jenjang SMP dan SMA dapat mengakses kuis harian tanpa khawatir batasan kuota transfer data atau limit request.',
-          '<strong>Efisiensi Dana Kas:</strong> Dana yayasan yang tadinya terancam tersedot untuk sewa software pihak ketiga dapat disimpan utuh atau dialihkan untuk fasilitas lab.'
+          '<strong>Efisiensi Anggaran Berkelanjutan:</strong> Alokasi dana yang sebelumnya berpotensi terserap untuk biaya lisensi pihak ketiga dapat dihemat dan dialihkan untuk pengembangan sarana pembelajaran.',
         ],
-        impact: 'Ketergantungan pada vendor pihak ketiga membuat yayasan terus mengeluarkan biaya operasional tahunan tanpa pernah memiliki sistemnya sendiri.',
-        solution: 'Yayasan 100% berdaulat atas teknologinya sendiri, bebas tagihan bulanan selamanya, dan sistem menjadi aset intelektual resmi sekolah Mutiara Bangsa 2.'
+        impact: 'Ketergantungan pada vendor pihak ketiga memicu biaya operasional rutin tahunan tanpa memberikan kepemilikan aset teknologi mandiri bagi sekolah.',
+        solution: 'Mutiara Bangsa School 100% berdaulat atas infrastruktur teknologinya sendiri, bebas biaya lisensi berulang, dan sistem menjadi aset resmi sekolah.'
       },
       'website-hosting': {
         badge: 'Penghematan Nyata (Quick Win)',
@@ -101,7 +101,7 @@
           '<strong>Hanya Bayar Domain PANDI:</strong> Pengeluaran sekolah ke depan hanya berupa perpanjangan domain resmi <code>.sch.id</code> sebesar Rp 55.000 per tahun.'
         ],
         impact: 'Pengeluaran kas sekolah rutin keluar untuk membayar sewa pihak ketiga, padahal sekolah memiliki kapasitas komputer dan jalur internet Biznet sendiri yang mampu melayani web tersebut.',
-        solution: 'Menghentikan pengeluaran sewa hosting Domainesia mulai periode berikutnya, menghemat kas yayasan secara nyata sejak tahun pertama implementasi.'
+        solution: 'Menghentikan biaya sewa hosting eksternal mulai periode berikutnya, memberikan efisiensi anggaran sekolah secara nyata sejak tahun pertama implementasi.'
       },
       'offline-exam': {
         badge: 'Keandalan CBT',
@@ -147,10 +147,10 @@
           { label: 'Penyusunan Deskripsi CP', before: 'Ketik Manual Guru', after: 'Dihasilkan Otomatis', highlight: 'Sesuai Standar Kemdikbud' }
         ],
         flowBefore: [
-          { step: '1. Kuis & Tugas', desc: 'Nilai di kertas / laptop' },
-          { step: '2. Excel Masing2', desc: 'Format file tidak seragam' },
-          { step: '3. Salin Manual', desc: 'Ketik ulang angka satu2' },
-          { step: '4. Lembur Berhari2', desc: 'Guru lelah jelang rapor' }
+          { step: '1. Kuis & Tugas', desc: 'Nilai di file spreadsheet' },
+          { step: '2. Format Beragam', desc: 'Format belum seragam' },
+          { step: '3. Rekonsiliasi', desc: 'Konsolidasi data manual' },
+          { step: '4. Beban Waktu', desc: 'Waktu tersita jelang rapor' }
         ],
         flowAfter: [
           { step: '1. CBT & Tugas MBISE', desc: 'Nilai masuk otomatis' },
@@ -159,7 +159,7 @@
           { step: '4. Cetak Rapor', desc: 'Selesai tepat waktu' }
         ],
         pointsBefore: [
-          '<strong>Pekerjaan Administratif Melelahkan:</strong> Para guru menghabiskan waktu berjam-jam di luar jam mengajar hanya untuk menyalin nilai dari kertas ulangan ke Excel.',
+          '<strong>Beban Waktu Konsolidasi Nilai:</strong> Para guru memerlukan alokasi waktu ekstra di luar jam mengajar untuk merekapitulasi dan menghitung ulang nilai tugas serta kuis harian ke dalam format akhir rapor.',
           '<strong>Format E-Rapor Rumit:</strong> Kurikulum Merdeka mewajibkan deskripsi Capaian Pembelajaran (CP) dan Tujuan Pembelajaran (TP) per siswa, yang sangat berat jika diketik manual.',
           '<strong>Keterlambatan Pembagian Rapor:</strong> Keterlambatan satu guru merekap nilai dapat menunda pencetakan rapor seluruh angkatan.'
         ],
@@ -174,73 +174,73 @@
       'poc-pc': {
         badge: 'Keamanan Investasi',
         title: 'Uji Coba Tahap 1 Memakai PC Lab Eksisting (Modal Awal Rp 0)',
-        subtitle: 'Pengadaan server baru hanya diajukan setelah sistem terbukti sukses di lapangan.',
+        subtitle: 'Pengadaan server semi-enterprise baru hanya diajukan setelah sistem terbukti sukses di lapangan.',
         metrics: [
           { label: 'Biaya Awal Tahap 1', before: 'Beli Server Baru (Puluhan Jt)', after: 'Rp 0 (PC Lab Sudah Ada)', highlight: 'Nol Risiko Finansial' },
           { label: 'Spesifikasi Uji Coba', before: 'Harus Beli Baru', after: 'Core i3 / 8GB / SSD+HDD', highlight: 'Sudah Tersedia di Lab' },
           { label: 'Waktu Implementasi', before: 'Tunggu Anggaran & Tender', after: 'Bisa Mulai Besok', highlight: 'Implementasi Cepat' }
         ],
         flowBefore: [
-          { step: '1. Proposal Mahal', desc: 'Minta puluhan juta di awal' },
-          { step: '2. Yayasan Ragu', desc: 'Takut dana terbuang sia2' },
-          { step: '3. Diskusi Alot', desc: 'Proyek tertunda berbulan2' },
-          { step: '4. Tetap Manual', desc: 'Sekolah tidak maju2' }
+          { step: '1. Pengajuan Awal', desc: 'Alokasi anggaran di muka' },
+          { step: '2. Kehati-hatian', desc: 'Evaluasi kelayakan investasi' },
+          { step: '3. Penyelarasan', desc: 'Menyelaraskan prioritas unit' },
+          { step: '4. Status Quo', desc: 'Modernisasi tertunda' }
         ],
         flowAfter: [
           { step: '1. Manfaatkan PC Lab', desc: 'Gunakan 1 unit PC praktek' },
           { step: '2. Uji 1-2 Kelas', desc: 'Buktikan stabil di 60 anak' },
-          { step: '3. Bukti Nyata', desc: 'Tunjukkan hasil ke yayasan' },
-          { step: '4. Pengadaan Aman', desc: 'Yayasan yakin 100%' }
+          { step: '3. Bukti Nyata', desc: 'Tunjukkan hasil ke pimpinan' },
+          { step: '4. Pengadaan Terukur', desc: 'Investasi aman berbasis fakta' }
         ],
         pointsBefore: [
-          '<strong>Kekhawatiran Investasi Gagal:</strong> Pengurus yayasan sangat wajar bersikap hati-hati mengeluarkan anggaran modal puluhan juta untuk sistem yang belum teruji.',
-          '<strong>Kebutuhan Bukti Nyata:</strong> Teori di atas kertas tidak cukup meyakinkan pengurus jika belum dibuktikan langsung pada komputer sekolah kita sendiri.',
+          '<strong>Prinsip Kehati-hatian Finansial:</strong> Pimpinan dan manajemen sekolah sangat wajar bersikap teliti dalam mengevaluasi alokasi anggaran investasi agar tepat sasaran dan memberikan dampak nyata.',
+          '<strong>Kebutuhan Bukti Nyata:</strong> Pengujian langsung pada infrastruktur komputer sekolah memberikan parameter objektif dan data performa riil sebelum pengadaan skala penuh.',
           '<strong>Aset Menganggur:</strong> Di ruang lab ICT Mutiara Bangsa 2 sudah ada unit komputer praktek yang memiliki kapasitas cukup untuk pengujian sistem.'
         ],
         pointsAfter: [
           '<strong>Proof of Concept (POC) Rp 0:</strong> Kita instal Proxmox VE pada 1 unit PC lab (Intel Core i3 Gen 4, RAM 8 GB, SSD 128 GB, HDD 1 TB) yang sudah terhubung ke switch lab.',
           '<strong>Uji Beban Terukur:</strong> Sistem langsung diuji coba untuk tugas harian dan ujian 1-2 kelas (30-60 siswa) guna mengukur kestabilan nyata tanpa biaya sepeser pun.',
-          '<strong>Pengadaan Berbasis Fakta:</strong> Setelah yayasan melihat langsung ujian berjalan tanpa internet dan absensi terkirim ke WhatsApp, pengadaan server baru diajukan dengan rasa tenang.'
+          '<strong>Pengadaan Berbasis Fakta:</strong> Setelah pimpinan dan manajemen menyaksikan langsung keandalan simulasi ujian offline dan presensi digital, pengadaan server semi-enterprise baru diajukan dengan keyakinan penuh.'
         ],
         impact: 'Kekhawatiran akan tingginya risiko biaya pengadaan sistem IT baru sering kali menjadi pertimbangan dalam percepatan digital sekolah.',
-        solution: 'Memberikan kepastian dan rasa aman bagi yayasan: membuktikan keandalan sistem terlebih dahulu menggunakan komputer lab yang sudah tersedia (Rp 0) sebelum ada komitmen penganggaran.'
+        solution: 'Memberikan kepastian dan akuntabilitas: membuktikan keandalan sistem terlebih dahulu menggunakan perangkat lab eksisting (Rp 0) sebelum ada alokasi anggaran final.'
       },
       'consideration-1': {
-        badge: 'Pertimbangan Strategis Yayasan',
-        title: '1. Dari Sistem Serba Manual Menuju Otomatisasi Terpadu',
+        badge: 'Pertimbangan Strategis Manajemen',
+        title: '1. Dari Kanal Terpisah Menuju Otomatisasi Terpadu',
         subtitle: 'Menyatukan presensi, keuangan, akademik, dan website ke dalam 1 pintu terpusat.',
         metrics: [
           { label: 'Sistem Operasional', before: 'Terpisah & Tanpa Koneksi', after: '1 Basis Data Terpusat', highlight: 'Terintegrasi Penuh' },
-          { label: 'Visibilitas Yayasan', before: 'Laporan Manual Lambat', after: 'Dashboard Real-Time', highlight: 'Pantau dari Mana Saja' },
+          { label: 'Visibilitas Pimpinan', before: 'Laporan Manual Lambat', after: 'Dashboard Real-Time', highlight: 'Pantau dari Mana Saja' },
           { label: 'Efisiensi Waktu Staf', before: 'Habis untuk Salin Data', after: 'Otomatis oleh Sistem', highlight: 'Fokus Pelayanan' }
         ],
         flowBefore: [
-          { step: '1. Kertas Presensi', desc: 'Rekap absen fisik' },
-          { step: '2. Buku Kas TU', desc: 'Catat bayar manual' },
-          { step: '3. Laptop Guru', desc: 'Nilai di file terpisah' },
-          { step: '4. Data Tidak Sinkron', desc: 'Perlu sinkronisasi manual' }
+          { step: '1. Kanal Terpisah', desc: 'Rekap kehadiran parsial' },
+          { step: '2. Buku Kas TU', desc: 'Catat SPP di kantor TU' },
+          { step: '3. Spreadsheet Guru', desc: 'Nilai di file masing-masing' },
+          { step: '4. Data Tidak Sinkron', desc: 'Perlu rekonsiliasi manual' }
         ],
         flowAfter: [
           { step: '1. Presensi Guru Piket', desc: 'Input digital & notif WA' },
           { step: '2. Modul Keuangan', desc: 'Catatan SPP transparan' },
           { step: '3. E-Rapor Kurmer', desc: 'Nilai terhubung langsung' },
-          { step: '4. Laporan Yayasan', desc: 'Grafik real-time 1 klik' }
+          { step: '4. Laporan Eksekutif', desc: 'Grafik real-time 1 klik' }
         ],
         pointsBefore: [
-          'Data siswa saat ini masih berada di beberapa kanal: absensi di lembar guru piket, SPP di pembukuan TU, dan nilai di spreadsheet masing-masing guru.',
-          'Manajemen yayasan dan pimpinan sekolah membutuhkan waktu koordinasi bertahap untuk memantau status pembayaran SPP maupun rekapitulasi kehadiran harian.',
-          'Pencatatan manual yang tersebar membutuhkan proses rekonsiliasi berkala untuk memastikan konsistensi data antardepartemen.'
+          'Data siswa saat ini masih berada di beberapa kanal: kehadiran di lembar guru piket, SPP di pembukuan TU, dan nilai di spreadsheet masing-masing guru.',
+          'Pimpinan sekolah dan manajemen membutuhkan waktu koordinasi berkala untuk memantau status administrasi keuangan maupun kehadiran siswa.',
+          'Pencatatan yang tersebar di kanal masing-masing membutuhkan proses rekonsiliasi berkala untuk memastikan konsistensi data antardepartemen.'
         ],
         pointsAfter: [
           'MBISE menciptakan Satu Sumber Kebenaran Data (Single Source of Truth) untuk seluruh unit Mutiara Bangsa 2.',
-          'Pengurus yayasan dan kepala sekolah memiliki kemudahan memantau statistik kehadiran siswa, rekap administrasi, dan kemajuan akademik dari satu dashboard.',
+          'Pimpinan sekolah dan kepala sekolah memiliki kemudahan memantau statistik kehadiran siswa, rekap administrasi, dan kemajuan akademik dari satu dashboard terpadu.',
           'Seluruh proses terekam dengan jejak audit digital yang terstandarisasi, aman, dan dapat dipertanggungjawabkan.'
         ],
         impact: 'Belum terhubungnya data antarunit membuat proses rekapitulasi operasional sekolah membutuhkan waktu koordinasi ekstra.',
-        solution: 'Memberikan transparansi dan kemudahan akses bagi pengurus yayasan dan pimpinan sekolah dalam memantau perkembangan sekolah secara real-time.'
+        solution: 'Memberikan transparansi dan kemudahan akses bagi pimpinan sekolah dan kepala sekolah dalam memantau perkembangan sekolah secara real-time.'
       },
       'consideration-2': {
-        badge: 'Pertimbangan Strategis Yayasan',
+        badge: 'Pertimbangan Strategis Manajemen',
         title: '2. Efisiensi Biaya Nyata (Quick Win & Hemat Rutin Kas)',
         subtitle: 'Menghentikan pengeluaran sewa hosting luar dan menghindari biaya vendor software bulanan.',
         metrics: [
@@ -258,35 +258,35 @@
           { step: '1. Hentikan Sewa', desc: 'Website ke server lokal' },
           { step: '2. Server Mandiri', desc: 'Rp 0 biaya langganan' },
           { step: '3. Jadi Aset Fisik', desc: 'Server bertahan 7 tahun' },
-          { step: '4. Kas Yayasan Aman', desc: 'Hemat ratusan juta' }
+          { step: '4. Anggaran Efisien', desc: 'Hemat biaya jangka panjang' }
         ],
         pointsBefore: [
-          'Biaya sewa hosting website <code>mutiarabangsa.sch.id</code> di Domainesia sebesar Rp 2,3 juta per 2 tahun adalah biaya rutin yang terus keluar dari kas yayasan.',
+          'Biaya sewa hosting website <code>mutiarabangsa.sch.id</code> di Domainesia sebesar Rp 2,3 juta per 2 tahun adalah biaya rutin yang terus keluar dari anggaran operasional.',
           'Jika sekolah membeli aplikasi sekolah dari vendor komersial luar, biaya yang harus dibayar adalah Rp 15.000 / anak / bulan (mencapai Rp 108 juta per tahun untuk 600 siswa).',
           'Biaya sewa software bersifat hangus selamanya: jika tahun depan sekolah tidak membayar, semua data dan akses sistem langsung diputus oleh vendor.'
         ],
         pointsAfter: [
-          'Menghentikan sewa Domainesia langsung menghemat kas yayasan sejak tahun pertama.',
+          'Menghentikan sewa Domainesia langsung memberikan efisiensi anggaran sejak tahun pertama.',
           'Menghilangkan kebutuhan membayar software vendor bulanan, menghemat potensi pengeluaran hingga ratusan juta rupiah selama 5-7 tahun ke depan.',
-          'Pengadaan server fisik menjadi aset inventaris resmi milik yayasan yang nilai gunanya dapat dinikmati ribuan siswa dari tahun ke tahun.'
+          'Pengadaan server semi-enterprise menjadi aset inventaris resmi milik sekolah yang nilai gunanya dapat dinikmati ribuan siswa dari tahun ke tahun.'
         ],
-        impact: 'Mengeluarkan biaya sewa terus menerus adalah pemborosan anggaran yang tidak meninggalkan aset berwujud bagi yayasan.',
+        impact: 'Mengeluarkan biaya sewa terus menerus membebani anggaran operasional tanpa meninggalkan kepemilikan aset berwujud bagi sekolah.',
         solution: 'Mengubah biaya pengeluaran operasional (Opex) yang hangus menjadi aset modal (Capex) yang produktif dan bernilai jangka panjang.'
       },
       'consideration-3': {
-        badge: 'Pertimbangan Strategis Yayasan',
+        badge: 'Pertimbangan Strategis Manajemen',
         title: '3. Uji Coba Tanpa Risiko Dana Awal (Safety First)',
         subtitle: 'Keputusan pengadaan server baru diambil berdasarkan fakta lapangan, bukan asumsi.',
         metrics: [
-          { label: 'Biaya Persetujuan Awal', before: 'Harus Setuju Puluhan Jt', after: 'Rp 0 di Tahap 1', highlight: 'Nol Risiko Yayasan' },
+          { label: 'Biaya Persetujuan Awal', before: 'Harus Setuju Puluhan Jt', after: 'Rp 0 di Tahap 1', highlight: 'Bebas Risiko Finansial' },
           { label: 'Metode Pengujian', before: 'Langsung Beli Baru', after: 'Simulasi PC Lab Dulu', highlight: 'Sangat Terukur' },
           { label: 'Kepastian Keberhasilan', before: 'Spekulatif / Ragu', after: 'Terbukti di 60 Siswa', highlight: '100% Terverifikasi' }
         ],
         flowBefore: [
-          { step: '1. Ajukan Anggaran', desc: 'Minta puluhan juta' },
-          { step: '2. Yayasan Was-was', desc: 'Khawatir alat tak terpakai' },
-          { step: '3. Proyek Mandek', desc: 'Tidak ada titik temu' },
-          { step: '4. Rugi Waktu', desc: 'Sekolah jalan di tempat' }
+          { step: '1. Pengajuan Awal', desc: 'Alokasi anggaran di muka' },
+          { step: '2. Verifikasi Kebutuhan', desc: 'Memastikan adopsi pengguna' },
+          { step: '3. Penundaan Rencana', desc: 'Menunggu bukti kecocokan' },
+          { step: '4. Peluang Terlewat', desc: 'Transformasi belum terwujud' }
         ],
         flowAfter: [
           { step: '1. Izin Uji Coba', desc: 'Tanpa minta uang di awal' },
@@ -295,17 +295,17 @@
           { step: '4. Keputusan Tenang', desc: 'Pengadaan disetujui aman' }
         ],
         pointsBefore: [
-          'Pengurus yayasan seringkali ragu menyetujui pengadaan perangkat IT baru karena kekhawatiran sistem tidak berjalan lancar atau tidak dipakai oleh guru.',
+          'Pimpinan dan manajemen sekolah mengedepankan prinsip kehati-hatian dalam investasi perangkat teknologi untuk memastikan tingkat adopsi dan efektivitas penggunaan di lapangan.',
           'Membeli server baru di muka sebelum membuktikan kecocokan software dengan alur kerja sekolah adalah langkah yang mengandung risiko.',
           'Komputer praktek yang ada di lab saat ini belum dimanfaatkan secara optimal di luar jam pelajaran.'
         ],
         pointsAfter: [
           'Fase 1 MBISE menggratiskan seluruh tahapan uji coba dengan memanfaatkan 1 unit PC praktek yang sudah ada di Lab ICT Mutiara Bangsa 2.',
-          'Pengurus yayasan diundang secara langsung menyaksikan simulasi ujian offline tanpa internet dan simulasi absensi WhatsApp bot.',
-          'Pengajuan anggaran pembelian unit server baru di Fase 2 hanya dilakukan setelah sistem terbukti 100% stabil, mudah dipakai guru, dan disukai orang tua murid.'
+          'Pimpinan sekolah dan kepala sekolah diundang secara langsung menyaksikan simulasi ujian offline tanpa internet dan simulasi presensi digital.',
+          'Pengajuan anggaran pembelian unit server semi-enterprise dan UPS di Fase 2 hanya dilakukan setelah sistem terbukti 100% stabil, mudah dipakai guru, dan disukai orang tua murid.'
         ],
-        impact: 'Kekhawatiran yang wajar dari pengurus yayasan seringkali menghambat modernisasi jika tidak ada skema uji coba yang bebas risiko.',
-        solution: 'Skema 4 Fase MBISE memberikan rasa aman 100% bagi yayasan: buktikan dulu manfaatnya secara nyata, baru putuskan investasinya kemudian.'
+        impact: 'Pendekatan bertahap memberikan ruang evaluasi objektif sehingga adopsi teknologi berlangsung selaras dengan kesiapan seluruh pihak.',
+        solution: 'Skema 4 Fase MBISE memberikan kepastian penuh: buktikan dulu manfaatnya secara nyata di lapangan, baru putuskan investasinya kemudian.'
       }
     };
 
@@ -472,7 +472,7 @@
       const totalYear1Saas = yearlySaas + domainesiaAndPluginsYearly;
       const threeYearsSaas = (yearlySaas * 3) + (domainesiaAndPluginsYearly * 3);
 
-      const serverCapex = 10000000;
+      const serverCapex = 20000000;
       const electricityThreeYears = 120000 * 36;
       const domainRegistrationThreeYears = 55000 * 3;
       const mbiseThreeYears = serverCapex + electricityThreeYears + domainRegistrationThreeYears;
